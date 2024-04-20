@@ -12,7 +12,6 @@ export function Card({href, text, thumb}: ICard){
     return (
     <Link to={href} className={styles.card}>
         <ImageBase64 src={thumb}/>
-        <img src={thumb} />
         <span>{text}</span>
     </Link>
     )
