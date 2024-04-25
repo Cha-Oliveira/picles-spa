@@ -1,21 +1,22 @@
-import { Header } from "../../components/common/Header/Header";
-import { Grid } from "../../components/layout/Grid";
+import { Header } from "../../components/common/Header/Header"
+import { Grid } from "../../components/layout/Grid"
 import styles from './Pets.module.css'
-import { Card } from "../../components/common/Card";
-import { Skeleton } from "../../components/common/Skeleton";
-import { Pagination } from "../../components/common/Pagination";
-import { useSearchParams } from "react-router-dom";
-import { usePetList } from "../../hooks/usePetList";
-import { Select } from "../../components/common/Select";
-import { filterColumns } from "./Pets.constants";
-import { GetPetsRequest } from "../../interfaces/pet";
-import { FormEvent } from 'react'
+import { Card } from "../../components/common/Card"
+import { Skeleton } from "../../components/common/Skeleton"
+import { Pagination } from "../../components/common/Pagination"
+import { useSearchParams } from "react-router-dom"
+import { usePetList } from "../../hooks/usePetList"
+import { Select } from "../../components/common/Select"
+import { filterColumns } from "./Pets.constants"
+import { GetPetsRequest } from "../../interfaces/pet"
+import { ChangeEvent, FormEvent, useState } from 'react'
+import { Button, ButtonVariant } from "../../components/common/Button"
 
 
 
 export function Pets() {
 
-    
+    const [isButtonEnable, setIsButtonEnabled] = useState(false)
     const [searchParams, setSearshParams] = useSearchParams()
     const urlParams = {
         page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
@@ -26,6 +27,16 @@ export function Pets() {
 
 
     const { data, isLoading } = usePetList(urlParams)
+
+    function checkButtonStatus(event: ChangeEvent<HTMLFormElement>){
+        const {type, size, gender} = getFormValue(event.target.form)
+
+        if(type !== urlParams.type || size !== urlParams.size || gender !== urlParams.gender){
+            setIsButtonEnabled(true)
+        }else{
+            setIsButtonEnabled(false)
+        }
+    }
 
     function changePage(page: number) {
       setSearshParams((params) => {
@@ -58,7 +69,8 @@ export function Pets() {
   
       const formValues = getFormValue(event.target as HTMLFormElement)
       const newSearchParams = updateSearchParams(formValues)
-  
+        
+      setIsButtonEnabled(false)
       setSearshParams(newSearchParams)
     }
 
@@ -79,7 +91,7 @@ export function Pets() {
                             </div>
                         ))}
                     </div>
-                    <button type="submit">Buscar</button>
+                    <Button type="submit" variant = {isButtonEnable ? ButtonVariant.Default : ButtonVariant.Disabled}>Buscar</Button>
                 </form>
                 {isLoading && (
                     <Skeleton containerClassName={styles.skeleton} count={10} />
